@@ -1,0 +1,28 @@
+#Rafael dos Santos Tavares
+
+### Verbo GET – listar todos
+GET http://localhost:8000/cliente/ HTTP/1.1
+### Verbo GET – listar um
+GET http://localhost:8000/cliente/10 HTTP/1.1
+### Verbo POST – adicionar
+POST http://localhost:8000/cliente/ HTTP/1.1
+content-Type: application/json
+
+{
+    "nome": "Rafas",
+    "cpf": "123123123",
+    "telefone": "9999999999"
+}
+
+### Verbo PUT – atualiza
+PUT http://localhost:8000/cliente/2 HTTP/1.1
+content-Type: application/json
+
+{
+    "nome": "Rafael dos Santos Tavares",
+    "cpf": "123123123",
+    "telefone": "9999999999"
+}
+
+### Verbo DELETE - excluir
+DELETE http://localhost:8000/cliente/3 HTTP/1.1
