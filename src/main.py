@@ -6,6 +6,7 @@ import uvicorn
 from routers import FuncionarioRouter
 from routers import ClienteRouter
 from routers import ProdutoRouter
+from routers import AuthRouter
 
 # lifespan - ciclo de vida da aplicação
 from infra import database
@@ -31,6 +32,7 @@ async def root():
 "http://127.0.0.1:8000/redoc" }
 
 # incluir as rotas/endpoints no FastAPI
+app.include_router(AuthRouter.router)
 app.include_router(FuncionarioRouter.router)
 app.include_router(ClienteRouter.router)
 app.include_router(ProdutoRouter.router)

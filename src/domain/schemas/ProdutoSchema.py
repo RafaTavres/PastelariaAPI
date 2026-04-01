@@ -21,3 +21,10 @@ class ProdutoResponse(BaseModel):
     descricao: str
     foto: bytes
     valor_unitario: float
+
+class ProdutoPublicResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
+    nome: str
+    descricao: str
+    foto: bytes
