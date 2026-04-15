@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI 
+from fastapi.middleware.cors import CORSMiddleware
+from settings import HOST, PORT, RELOAD, CORS_ORIGINS
 from settings import HOST, PORT, RELOAD
 import uvicorn
 from infra.rate_limit import limiter, rate_limit_exceeded_handler
@@ -8,6 +10,7 @@ from routers import FuncionarioRouter
 from routers import ClienteRouter
 from routers import ProdutoRouter
 from routers import AuthRouter
+from routers import ComandaRouter
 from routers import AuditoriaRouter
 from routers import HealthRouter
 # lifespan - ciclo de vida da aplicação
@@ -27,6 +30,20 @@ async def lifespan(app: FastAPI):
 # cria a aplicação FastAPI com o contexto de vida
 app = FastAPI(lifespan=lifespan)
 
+from infra.middleware.IPAccessMiddleware import IPAccessMiddleware
+# Aplicar middleware de controle de acesso
+app.add_middleware(IPAccessMiddleware, allowed_origins=CORS_ORIGINS)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ORIGINS,
+    allow_credentials=False if "*" in CORS_ORIGINS else True, # Não permite credenciais (cookies, auth headers) se origem for *
+    allow_methods=["GET", "POST", "PUT", "DELETE"], # Métodos específicos - * para permitir todos
+    allow_headers=["Content-Type", "Authorization"], # Headers específicos - * para permitir todos
+    expose_headers=["*"], # Expõe headers para debug
+    max_age=600, # Cache de preflight por 10 minutos
+)
+
 app.state.limiter = limiter
 
 app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
@@ -40,6 +57,7 @@ async def root():
 app.include_router(AuthRouter.router)
 app.include_router(AuditoriaRouter.router)
 app.include_router(HealthRouter.router)
+app.include_router(ComandaRouter.router)
 app.include_router(FuncionarioRouter.router)
 app.include_router(ClienteRouter.router)
 app.include_router(ProdutoRouter.router)
